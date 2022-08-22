@@ -1,0 +1,5 @@
+const APP_CONFIG = {
+	endpoint: "web_app_url_here",
+	successSound: "./Twotone.wav",
+	errorSound: "./Modiferz.wav"
+};

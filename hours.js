@@ -22,7 +22,7 @@ function transformTabularData(rawdata) {
 }
 
 const app = {
-	name: "Hours",
+	name: "TBird Hours",
 	data() {
 		return {
 			form: {
@@ -48,15 +48,11 @@ const app = {
 		this.timer = setInterval(this.setDateTime, 1000);
 	},
 	mounted() {
-		fetch(configFile)
-			.then((res) => res.json())
-			.then((config) => {
-				endpoint = config["endpoint"];
-				successSound = new Audio(config["successSound"]);
-				errorSound = new Audio(config["errorSound"]);
-			})
-			.then(this.getUsersData)
-			.catch((err) => console.error(err));
+		endpoint = APP_CONFIG["endpoint"];
+		successSound = new Audio(APP_CONFIG["successSound"]);
+		errorSound = new Audio(APP_CONFIG["errorSound"]);
+		
+		this.getUsersData();
 		window.addEventListener("online", this.updateOnlineStatus);
 		window.addEventListener("offline", this.updateOnlineStatus);
 		window.addEventListener("keydown", (e) => {
@@ -91,8 +87,8 @@ const app = {
 		setDateTime() {
 			const date = new Date();
 			this.dateTime = {
-				date: `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`,
-				time: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
+				date: `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`,
+				time: `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`,
 			};
 		},
 		//https://javascript.plainenglish.io/create-a-digital-clock-app-with-vue-3-and-javascript-c5c0251d5ce3
