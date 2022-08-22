@@ -38,8 +38,8 @@ const app = {
 			usersCheckedIn: 0,
 			onLine: navigator.onLine,
 			dateTime: {
-				date: `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`,
-				time: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
+				date: `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`,
+				time: `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`,
 			},
 			timer: undefined,
 		};
