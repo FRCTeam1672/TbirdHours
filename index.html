@@ -127,7 +127,7 @@
 
                 <footer>
                     <h3>
-                        Enter User ID
+                        Enter Student ID
                         <span v-if="onLine"
                             v-bind:class="{success: mode.operation == 'checkIn', primary: mode.operation == 'checkOut'}"
                             class="label">
@@ -138,7 +138,7 @@
                     <form @submit.prevent="submitForm">
                         <div class="input-field">
                             <input autocomplete="off" ref="userID" type="text" id="userID" v-model="form.userID"
-                                placeholder="User ID" />
+                                placeholder="Student ID" />
                             <button>Submit</button>
                         </div>
                         <p>
@@ -152,7 +152,7 @@
                             <strong>Check Out</strong>
                             mode, enter
                             <strong>*</strong>
-                            to reload this page
+                            to refresh attendance data
                         </p>
                     </form>
                 </footer>
