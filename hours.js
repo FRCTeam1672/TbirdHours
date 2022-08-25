@@ -106,9 +106,15 @@ const app = {
 			this.disableUserField();
 			let response;
 			let responseJSON;
+			if(this.form.userID === "#"){
+				//Sign all of the users out
+				this.mode.operation = "begonechildren";
+				this.enableUserField();
+			}
 			if (this.form.userID === "") {
 				this.enableUserField();
-			} else {
+				return;
+			}
 				await fetch(
 					endpoint +
 						"?" +
@@ -130,15 +136,16 @@ const app = {
 						}
 						this.localLog.push({
 							userID: this.form.userID,
-							operation: 'attendance',
+							operation: this.mode.operation,
 							status: data.status,
 							message: data.message,
 						});
 						this.enableUserField();
 					});
 				this.form.userID = "";
+				this.mode.operation = "attendance";
 				this.getUsersData();
-			}
+	
 		},
 		async getUsersData() {
 			await fetch(

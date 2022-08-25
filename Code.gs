@@ -44,8 +44,6 @@ function userExists(userID) {
 	return false;
 }
 
-function myFunction() {}
-
 function toggleAttendance(e){
   if (findOrphanedCheckIn(e.parameter.userID)) {
 				//User is already checked in, lets check them out
@@ -68,12 +66,43 @@ function toggleAttendance(e){
 				).setMimeType(ContentService.MimeType.JSON);
 			}
 }
+function begoneChildren(){
+  let values = userSheet.getDataRange().getValues();
+	for (let i = 0; i < values.length; i++) {
+		if (i > 0) {
+			if (values[i][0].toString() != "") {
+				console.log("UserName: " + values[i][0].toString());
+        console.log("Value: " + values[i][4].toString());
+        if(values[i][4]){
+          console.log("check them out")
+            row = findOrphanedCheckIn(values[i][0]) + 1;
+				    dataSheet
+					.getRange(row, 3, 1, 2)
+					.setValues([[new Date(), `=C${row}-B${row}`]]);
+        }
+        continue;
+			}
+		}
+	}
+	return null;
+}
 function doGet(e) {
 	if (e.parameter.operation.toString() === "getUsersData") {
 		return ContentService.createTextOutput(
 			JSON.stringify(userSheet.getDataRange().getValues())
 		).setMimeType(ContentService.MimeType.JSON);
 	}
+  if(e.parameter.operation.toString() === "begonechildren"){
+    begoneChildren();
+
+    //Little fun message for if you want to be able to add a bit of *spice* to your message
+    // return ContentService.createTextOutput(
+		// 	JSON.stringify({ status: "success", message: "BEGONE CHILLLDREEEEN" })
+		// ).setMimeType(ContentService.MimeType.JSON);
+      return ContentService.createTextOutput(
+			JSON.stringify({ status: "success", message: "Signed everyone out" })
+		).setMimeType(ContentService.MimeType.JSON);
+  }
 	if (userExists(e.parameter.userID)) {
     //Start by checking in the user, if not, then check them out
     return toggleAttendance(e);
