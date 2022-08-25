@@ -7,6 +7,7 @@
     <title>Hours</title>
     <link rel="stylesheet" href="picnic.min.css" />
     <link rel="stylesheet" href="hours.css" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 
 <body>
@@ -23,7 +24,7 @@
                         <div class="member">
                             <div class="member-name">{{row["First Name"]}} {{row["Last Name"]}}</div>
                             <div class="member-id"><label>Id:</label> {{row["User ID"]}}</div>
-                            <div class="member-hours"><label>Hours:</label> {{convertTimestampToDuration(row["Total Seconds"])}}</div>
+                            <div class="member-hours"><label>Hours/Mins:</label> {{convertTimestampToDuration(row["Total Seconds"])}}</div>
                         </div>
                     </div>
                 </main>
@@ -47,21 +48,14 @@
                     <table class="primary center">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Operation</th>
-                                <th>Status</th>
+                                <th>Student ID</th>
+                                <th>Message</th>
+				<th></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="item in localLogEntries">
                                 <td>{{item.userID}}</td>
-                                <td>
-                                    <span
-                                        v-bind:class="{success: item.operation == 'checkIn', primary: item.operation == 'checkOut'}"
-                                        class="label">
-                                        {{item.operation}}
-                                    </span>
-                                </td>
                                 <td>
                                     <span
                                         v-bind:class="{success: item.status == 'success', warning: item.status == 'error'}"
@@ -126,32 +120,21 @@
 
                 <footer>
                     <h3>
-                        Enter User ID
-                        <span v-if="onLine"
-                            v-bind:class="{success: mode.operation == 'checkIn', primary: mode.operation == 'checkOut'}"
-                            class="label">
-                            {{this.mode.text}}
-                        </span>
-                        <span class="label error" v-else>Offline</span>
+                        Enter/Scan your Student ID
                     </h3>
                     <form @submit.prevent="submitForm">
                         <div class="input-field">
                             <input autocomplete="off" ref="userID" type="text" id="userID" v-model="form.userID"
-                                placeholder="User ID" />
+                                placeholder="Student ID" />
                             <button>Submit</button>
                         </div>
                         <p>
+			    <strong>Enter or scan</strong> your student ID to check in or out.
+			</p>
+			<p>
                             Enter
-                            <strong>+00</strong>
-                            to enter
-                            <strong>Check In</strong>
-                            mode, enter
-                            <strong>+01</strong>
-                            to enter
-                            <strong>Check Out</strong>
-                            mode, enter
                             <strong>*</strong>
-                            to reload this page
+                            to refresh attendance data
                         </p>
                     </form>
                 </footer>
@@ -159,7 +142,8 @@
         </div>
     </div>
 </body>
-<script src="vue.global.js"></script>
-<script src="hours.js"></script>
+<script src="./config.js"></script>
+<script src="./vue.global.js"></script>
+<script src="./hours.js"></script>
 
 </html>

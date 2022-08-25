@@ -44,32 +44,10 @@ function userExists(userID) {
 	return false;
 }
 
-function myFunction() {}
-
-function doGet(e) {
-	if (e.parameter.operation.toString() === "getUsersData") {
-		return ContentService.createTextOutput(
-			JSON.stringify(userSheet.getDataRange().getValues())
-		).setMimeType(ContentService.MimeType.JSON);
-	}
-	if (userExists(e.parameter.userID)) {
-		if (e.parameter.operation.toString() === "checkIn") {
-			if (findOrphanedCheckIn(e.parameter.userID)) {
-				return ContentService.createTextOutput(
-					JSON.stringify({
-						status: "error",
-						message: "User already checked in",
-					})
-				).setMimeType(ContentService.MimeType.JSON);
-			} else {
-				dataSheet.appendRow([e.parameter.userID, new Date()]);
-				return ContentService.createTextOutput(
-					JSON.stringify({ status: "success", message: "User checked in" })
-				).setMimeType(ContentService.MimeType.JSON);
-			}
-		}
-		if (e.parameter.operation.toString() === "checkOut") {
-			if (
+function toggleAttendance(e){
+  if (findOrphanedCheckIn(e.parameter.userID)) {
+				//User is already checked in, lets check them out
+        if (
 				findOrphanedCheckIn(e.parameter.userID) &&
 				userHasPastCheckin(e.parameter.userID)
 			) {
@@ -80,12 +58,54 @@ function doGet(e) {
 				return ContentService.createTextOutput(
 					JSON.stringify({ status: "success", message: "User checked out" })
 				).setMimeType(ContentService.MimeType.JSON);
+			} 
 			} else {
+				dataSheet.appendRow([e.parameter.userID, new Date()]);
 				return ContentService.createTextOutput(
-					JSON.stringify({ status: "error", message: "User not checked in" })
+					JSON.stringify({ status: "success", message: "User checked in" })
 				).setMimeType(ContentService.MimeType.JSON);
 			}
+}
+function begoneChildren(){
+  let values = userSheet.getDataRange().getValues();
+	for (let i = 0; i < values.length; i++) {
+		if (i > 0) {
+			if (values[i][0].toString() != "") {
+				console.log("UserName: " + values[i][0].toString());
+        console.log("Value: " + values[i][4].toString());
+        if(values[i][4]){
+          console.log("check them out")
+            row = findOrphanedCheckIn(values[i][0]) + 1;
+				    dataSheet
+					.getRange(row, 3, 1, 2)
+					.setValues([[new Date(), `=C${row}-B${row}`]]);
+        }
+        continue;
+			}
 		}
+	}
+	return null;
+}
+function doGet(e) {
+	if (e.parameter.operation.toString() === "getUsersData") {
+		return ContentService.createTextOutput(
+			JSON.stringify(userSheet.getDataRange().getValues())
+		).setMimeType(ContentService.MimeType.JSON);
+	}
+  if(e.parameter.operation.toString() === "begonechildren"){
+    begoneChildren();
+
+    //Little fun message for if you want to be able to add a bit of *spice* to your message
+    // return ContentService.createTextOutput(
+		// 	JSON.stringify({ status: "success", message: "BEGONE CHILLLDREEEEN" })
+		// ).setMimeType(ContentService.MimeType.JSON);
+      return ContentService.createTextOutput(
+			JSON.stringify({ status: "success", message: "Signed everyone out" })
+		).setMimeType(ContentService.MimeType.JSON);
+  }
+	if (userExists(e.parameter.userID)) {
+    //Start by checking in the user, if not, then check them out
+    return toggleAttendance(e);
 	} else {
 		return ContentService.createTextOutput(
 			JSON.stringify({ status: "error", message: "User does not exist" })

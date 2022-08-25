@@ -21,8 +21,13 @@ function transformTabularData(rawdata) {
 	);
 }
 
+// adds a 0 in front of a 1-digit number, otherwise nothing changes
+function padTwoDigits(x) {
+	return x.toString().padStart(2, '0');
+}
+
 const app = {
-	name: "Hours",
+	name: "TBird Hours",
 	data() {
 		return {
 			form: {
@@ -38,8 +43,8 @@ const app = {
 			usersCheckedIn: 0,
 			onLine: navigator.onLine,
 			dateTime: {
-				date: `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`,
-				time: `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`,
+				date: `${padTwoDigits(date.getMonth() + 1)}/${padTwoDigits(date.getDate())}/${date.getFullYear()}`,
+				time: `${padTwoDigits(date.getHours())}:${padTwoDigits(date.getMinutes())}:${padTwoDigits(date.getSeconds())}`,
 			},
 			timer: undefined,
 		};
@@ -48,15 +53,11 @@ const app = {
 		this.timer = setInterval(this.setDateTime, 1000);
 	},
 	mounted() {
-		fetch(configFile)
-			.then((res) => res.json())
-			.then((config) => {
-				endpoint = config["endpoint"];
-				successSound = new Audio(config["successSound"]);
-				errorSound = new Audio(config["errorSound"]);
-			})
-			.then(this.getUsersData)
-			.catch((err) => console.error(err));
+		endpoint = APP_CONFIG["endpoint"];
+		successSound = new Audio(APP_CONFIG["successSound"]);
+		errorSound = new Audio(APP_CONFIG["errorSound"]);
+		
+		this.getUsersData();
 		window.addEventListener("online", this.updateOnlineStatus);
 		window.addEventListener("offline", this.updateOnlineStatus);
 		window.addEventListener("keydown", (e) => {
@@ -91,8 +92,8 @@ const app = {
 		setDateTime() {
 			const date = new Date();
 			this.dateTime = {
-				date: `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`,
-				time: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
+				date: `${padTwoDigits(date.getMonth() + 1)}/${padTwoDigits(date.getDate())}/${date.getFullYear()}`,
+				time: `${padTwoDigits(date.getHours())}:${padTwoDigits(date.getMinutes())}:${padTwoDigits(date.getSeconds())}`,
 			};
 		},
 		//https://javascript.plainenglish.io/create-a-digital-clock-app-with-vue-3-and-javascript-c5c0251d5ce3
@@ -110,27 +111,15 @@ const app = {
 			this.disableUserField();
 			let response;
 			let responseJSON;
-			//if user types +00 set mode to checkIn
-			if (this.form.userID === "+00") {
-				this.mode.operation = "checkIn";
-				this.mode.text = "Check In";
-				this.form.userID = "";
-				this.getUsersData();
-				this.enableUserField();
-
-			}
-			//if user types +01 set mode to checkOut
-			else if (this.form.userID === "+01") {
-				this.mode.operation = "checkOut";
-				this.mode.text = "Check Out";
-				this.form.userID = "";
-				this.getUsersData();
+			if(this.form.userID === "#"){
+				//Sign all of the users out
+				this.mode.operation = "begonechildren";
 				this.enableUserField();
 			}
-			//if user submits nothing do nothing
-			else if (this.form.userID === "") {
+			if (this.form.userID === "") {
 				this.enableUserField();
-			} else {
+				return;
+			}
 				await fetch(
 					endpoint +
 						"?" +
@@ -159,8 +148,9 @@ const app = {
 						this.enableUserField();
 					});
 				this.form.userID = "";
+				this.mode.operation = "attendance";
 				this.getUsersData();
-			}
+	
 		},
 		async getUsersData() {
 			await fetch(
@@ -188,13 +178,13 @@ const app = {
 				});
 		},
 		convertTimestampToDuration(timestamp) {
-			d = Number(timestamp);
+			var d = Number(timestamp);
 
-			var h = Math.floor(d / 3600);
-			var m = Math.floor((d % 3600) / 60);
-			var s = Math.floor((d % 3600) % 60);
+			var h = padTwoDigits(Math.floor(d / 3600));
+			var m = padTwoDigits(Math.floor((d % 3600) / 60));
+			var s = padTwoDigits(Math.floor((d % 3600) % 60));
 
-			return ("0" + h).slice(-2) + ":" + ("0" + m).slice(-2);
+			return `${h}:${m}`;
 			// https://stackoverflow.com/questions/5539028/converting-seconds-into-hhmmss
 		},
 	},
