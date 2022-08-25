@@ -21,6 +21,11 @@ function transformTabularData(rawdata) {
 	);
 }
 
+// adds a 0 in front of a 1-digit number, otherwise nothing changes
+function padTwoDigits(x) {
+	return x.toString().padStart(2, '0');
+}
+
 const app = {
 	name: "TBird Hours",
 	data() {
@@ -38,8 +43,8 @@ const app = {
 			usersCheckedIn: 0,
 			onLine: navigator.onLine,
 			dateTime: {
-				date: `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`,
-				time: `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`,
+				date: `${padTwoDigits(date.getMonth() + 1)}/${padTwoDigits(date.getDate())}/${date.getFullYear()}`,
+				time: `${padTwoDigits(date.getHours())}:${padTwoDigits(date.getMinutes())}:${padTwoDigits(date.getSeconds())}`,
 			},
 			timer: undefined,
 		};
@@ -87,8 +92,8 @@ const app = {
 		setDateTime() {
 			const date = new Date();
 			this.dateTime = {
-				date: `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`,
-				time: `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`,
+				date: `${padTwoDigits(date.getMonth() + 1)}/${padTwoDigits(date.getDate())}/${date.getFullYear()}`,
+				time: `${padTwoDigits(date.getHours())}:${padTwoDigits(date.getMinutes())}:${padTwoDigits(date.getSeconds())}`,
 			};
 		},
 		//https://javascript.plainenglish.io/create-a-digital-clock-app-with-vue-3-and-javascript-c5c0251d5ce3
@@ -175,9 +180,9 @@ const app = {
 		convertTimestampToDuration(timestamp) {
 			var d = Number(timestamp);
 
-			var h = Math.floor(d / 3600).toString().padStart(2, '0');
-			var m = Math.floor((d % 3600) / 60).padStart(2, '0');
-			var s = Math.floor((d % 3600) % 60);
+			var h = padTwoDigits(Math.floor(d / 3600));
+			var m = padTwoDigits(Math.floor((d % 3600) / 60));
+			var s = padTwoDigits(Math.floor((d % 3600) % 60));
 
 			return `${h}:${m}`;
 			// https://stackoverflow.com/questions/5539028/converting-seconds-into-hhmmss
