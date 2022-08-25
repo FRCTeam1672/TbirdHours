@@ -173,13 +173,13 @@ const app = {
 				});
 		},
 		convertTimestampToDuration(timestamp) {
-			d = Number(timestamp);
+			var d = Number(timestamp);
 
-			var h = Math.floor(d / 3600);
-			var m = Math.floor((d % 3600) / 60);
+			var h = Math.floor(d / 3600).toString().padStart(2, '0');
+			var m = Math.floor((d % 3600) / 60).padStart(2, '0');
 			var s = Math.floor((d % 3600) % 60);
 
-			return ("0" + h).slice(-2) + ":" + ("0" + m).slice(-2);
+			return `${h}:${m}`;
 			// https://stackoverflow.com/questions/5539028/converting-seconds-into-hhmmss
 		},
 	},
