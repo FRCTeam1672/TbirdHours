@@ -106,25 +106,7 @@ const app = {
 			this.disableUserField();
 			let response;
 			let responseJSON;
-			//if user types +00 set mode to checkIn
-			if (this.form.userID === "+00") {
-				this.mode.operation = "checkIn";
-				this.mode.text = "Check In";
-				this.form.userID = "";
-				this.getUsersData();
-				this.enableUserField();
-
-			}
-			//if user types +01 set mode to checkOut
-			else if (this.form.userID === "+01") {
-				this.mode.operation = "checkOut";
-				this.mode.text = "Check Out";
-				this.form.userID = "";
-				this.getUsersData();
-				this.enableUserField();
-			}
-			//if user submits nothing do nothing
-			else if (this.form.userID === "") {
+			if (this.form.userID === "") {
 				this.enableUserField();
 			} else {
 				await fetch(
@@ -148,7 +130,7 @@ const app = {
 						}
 						this.localLog.push({
 							userID: this.form.userID,
-							operation: this.mode.operation,
+							operation: 'attendance',
 							status: data.status,
 							message: data.message,
 						});

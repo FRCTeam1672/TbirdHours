@@ -48,21 +48,14 @@
                     <table class="primary center">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Operation</th>
-                                <th>Status</th>
+                                <th>Student ID</th>
+                                <th>Message</th>
+				<th></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="item in localLogEntries">
                                 <td>{{item.userID}}</td>
-                                <td>
-                                    <span
-                                        v-bind:class="{success: item.operation == 'checkIn', primary: item.operation == 'checkOut'}"
-                                        class="label">
-                                        {{item.operation}}
-                                    </span>
-                                </td>
                                 <td>
                                     <span
                                         v-bind:class="{success: item.status == 'success', warning: item.status == 'error'}"
@@ -127,13 +120,7 @@
 
                 <footer>
                     <h3>
-                        Enter Student ID
-                        <span v-if="onLine"
-                            v-bind:class="{success: mode.operation == 'checkIn', primary: mode.operation == 'checkOut'}"
-                            class="label">
-                            {{this.mode.text}}
-                        </span>
-                        <span class="label error" v-else>Offline</span>
+                        Enter/Scan your Student ID
                     </h3>
                     <form @submit.prevent="submitForm">
                         <div class="input-field">
@@ -142,15 +129,10 @@
                             <button>Submit</button>
                         </div>
                         <p>
+			    <strong>Enter or scan</strong> your student ID to check in or out.
+			</p>
+			<p>
                             Enter
-                            <strong>+00</strong>
-                            to enter
-                            <strong>Check In</strong>
-                            mode, enter
-                            <strong>+01</strong>
-                            to enter
-                            <strong>Check Out</strong>
-                            mode, enter
                             <strong>*</strong>
                             to refresh attendance data
                         </p>

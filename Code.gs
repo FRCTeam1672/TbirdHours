@@ -46,30 +46,10 @@ function userExists(userID) {
 
 function myFunction() {}
 
-function doGet(e) {
-	if (e.parameter.operation.toString() === "getUsersData") {
-		return ContentService.createTextOutput(
-			JSON.stringify(userSheet.getDataRange().getValues())
-		).setMimeType(ContentService.MimeType.JSON);
-	}
-	if (userExists(e.parameter.userID)) {
-		if (e.parameter.operation.toString() === "checkIn") {
-			if (findOrphanedCheckIn(e.parameter.userID)) {
-				return ContentService.createTextOutput(
-					JSON.stringify({
-						status: "error",
-						message: "User already checked in",
-					})
-				).setMimeType(ContentService.MimeType.JSON);
-			} else {
-				dataSheet.appendRow([e.parameter.userID, new Date()]);
-				return ContentService.createTextOutput(
-					JSON.stringify({ status: "success", message: "User checked in" })
-				).setMimeType(ContentService.MimeType.JSON);
-			}
-		}
-		if (e.parameter.operation.toString() === "checkOut") {
-			if (
+function toggleAttendance(e){
+  if (findOrphanedCheckIn(e.parameter.userID)) {
+				//User is already checked in, lets check them out
+        if (
 				findOrphanedCheckIn(e.parameter.userID) &&
 				userHasPastCheckin(e.parameter.userID)
 			) {
@@ -80,12 +60,23 @@ function doGet(e) {
 				return ContentService.createTextOutput(
 					JSON.stringify({ status: "success", message: "User checked out" })
 				).setMimeType(ContentService.MimeType.JSON);
+			} 
 			} else {
+				dataSheet.appendRow([e.parameter.userID, new Date()]);
 				return ContentService.createTextOutput(
-					JSON.stringify({ status: "error", message: "User not checked in" })
+					JSON.stringify({ status: "success", message: "User checked in" })
 				).setMimeType(ContentService.MimeType.JSON);
 			}
-		}
+}
+function doGet(e) {
+	if (e.parameter.operation.toString() === "getUsersData") {
+		return ContentService.createTextOutput(
+			JSON.stringify(userSheet.getDataRange().getValues())
+		).setMimeType(ContentService.MimeType.JSON);
+	}
+	if (userExists(e.parameter.userID)) {
+    //Start by checking in the user, if not, then check them out
+    return toggleAttendance(e);
 	} else {
 		return ContentService.createTextOutput(
 			JSON.stringify({ status: "error", message: "User does not exist" })
