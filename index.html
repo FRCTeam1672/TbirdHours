@@ -19,15 +19,17 @@
     <div id="app" class="plainflex two main-content tall">
         <div>
             <article class="card h100">
-                <main class="member-list">
-                    <div v-for="row in usersData" v-bind:class="{ checkedIn: row['Checked In'] == true }">
-                        <div class="member">
-                            <div class="member-name">{{row["First Name"]}} {{row["Last Name"]}}</div>
-                            <div class="member-id"><label>Id:</label> {{row["User ID"]}}</div>
-                            <div class="member-hours"><label>Hours/Mins:</label> {{convertTimestampToDuration(row["Total Seconds"])}}</div>
+                <div class = "scrollable">
+                    <main class="member-list">
+                        <div v-for="row in usersData" v-bind:class="{ checkedIn: row['Checked In'] == true }">
+                            <div class="member">
+                                <div class="member-name">{{row["First Name"]}} {{row["Last Name"]}}</div>
+                                <div class="member-id"><label>Id:</label> {{row["User ID"]}}</div>
+                                <div class="member-hours"><label>Hours/Mins:</label> {{convertTimestampToDuration(row["Total Seconds"])}}</div>
+                            </div>
                         </div>
-                    </div>
-                </main>
+                    </main>
+                </div>
             </article>
         </div>
         &nbsp;

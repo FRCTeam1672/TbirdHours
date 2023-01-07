@@ -34,3 +34,5 @@ Team 1672's attendance solution, originally by Team 5892
 ## Tips
 
 - You can enter "#" into the ID field to immediately sign out every student that is currently checked in
+- **Important**
+  - Please make sure that when you are trying to copy spreadsheets, you first import the attached spreadsheet file, and *then* copy over the data
