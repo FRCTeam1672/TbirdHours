@@ -52,7 +52,7 @@
                             <tr>
                                 <th>Student ID</th>
                                 <th>Message</th>
-				<th></th>
+				                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -62,7 +62,8 @@
                                     <span
                                         v-bind:class="{success: item.status == 'success', warning: item.status == 'error'}"
                                         class="label">
-                                        {{item.status}}&nbsp;{{item.message}}
+                                        {{item.status}}&nbsp;{{item.message}}&nbsp;
+                                        <td></td>
                                     </span>
                                 </td>
                             </tr>
