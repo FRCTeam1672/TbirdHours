@@ -108,9 +108,6 @@ const app = {
 			this.onLine = type === "online";
 		},
 		async submitForm() {
-			this.disableUserField();
-			let response;
-			let responseJSON;
 			if(this.form.userID === "#"){
 				//Sign all of the users out
 				this.mode.operation = "begonechildren";
@@ -120,37 +117,37 @@ const app = {
 				this.enableUserField();
 				return;
 			}
-				await fetch(
-					endpoint +
-						"?" +
-						new URLSearchParams({
-							userID: this.form.userID,
-							operation: this.mode.operation,
-						}),
-					{
-						method: "GET",
-						redirect: "follow",
-					}
+			var id = this.form.userID;
+			this.form.userID = "";
+			await fetch(
+				endpoint +
+				"?" +
+				new URLSearchParams({
+					userID: id,
+					operation: this.mode.operation,
+				}),
+				{
+					method: "GET",
+					redirect: "follow",
+				}
 				)
-					.then((response) => response.json())
-					.then((data) => {
-						if (data.status === "error") {
-							errorSound.play();
-						} else if (data.status === "success") {
-							successSound.play();
-						}
-						this.localLog.push({
-							userID: this.form.userID,
-							operation: this.mode.operation,
-							status: data.status,
-							message: data.message,
-						});
-						this.enableUserField();
+				.then((response) => response.json())
+				.then((data) => {
+					if (data.status === "error") {
+						errorSound.play();
+					} else if (data.status === "success") {
+						successSound.play();
+					}
+					this.localLog.push({
+						userID: id,
+						operation: this.mode.operation,
+						status: data.status,
+						message: data.message,
 					});
-				this.form.userID = "";
+				});
 				this.mode.operation = "attendance";
 				this.getUsersData();
-	
+				
 		},
 		async getUsersData() {
 			await fetch(
