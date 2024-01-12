@@ -118,6 +118,9 @@ const app = {
 				return;
 			}
 			var id = this.form.userID;
+			if(id.startsWith(" ")){
+				id = id.substring(1);
+			}
 			this.form.userID = "";
 			await fetch(
 				endpoint +

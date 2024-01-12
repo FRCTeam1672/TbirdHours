@@ -24,8 +24,8 @@
                         <div v-for="row in usersData" v-bind:class="{ checkedIn: row['Checked In'] == true }">
                             <div class="member">
                                 <div class="member-name">{{row["First Name"]}} {{row["Last Name"]}}</div>
-                                <div class="member-id"><label>Id:</label> {{row["User ID"]}}</div>
-                                <div class="member-hours"><label>Hours/Mins:</label> {{convertTimestampToDuration(row["Total Seconds"])}}</div>
+                                <div class="member-id"><label>Id:</label> <i>{{row["User ID"]}}</i></div>
+                                <div class="member-hours"><label>Hours/Mins:</label> <i>{{convertTimestampToDuration(row["Total Seconds"])}}</i></div>
                             </div>
                         </div>
                     </main>
