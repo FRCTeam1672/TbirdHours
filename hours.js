@@ -30,6 +30,7 @@ const app = {
 	name: "TBird Hours",
 	data() {
 		return {
+			popupTimer: null,
 			form: {
 				userID: "",
 				operation: "",
@@ -61,9 +62,16 @@ const app = {
 		window.addEventListener("online", this.updateOnlineStatus);
 		window.addEventListener("offline", this.updateOnlineStatus);
 		window.addEventListener("keydown", (e) => {
-			if (e.key == "*") {
+			if (e.key === "*") {
 				location.reload();
 			}
+		});
+		window.addEventListener("keydown", (e) => {
+			if (e.key === "o") {
+				//show the popup modal
+				this.showPopup()
+			}
+			console.log("opened it up")
 		});
 		this.enableUserField();
 	},
@@ -82,6 +90,46 @@ const app = {
 
 	},
 	methods: {
+		showPopup() {
+			const popup = document.getElementById("popup-box");
+			if (popup) {
+				popup.style.display = "flex";
+			}
+		},
+		closePopup() {
+			const popup = document.getElementById("popup-box");
+			if (popup) {
+				popup.style.display = "none";
+				if(this.popupTimer) {
+					clearTimeout(this.popupTimer);
+					this.popupTimer = null;
+				}
+			}
+		},
+		startTimer() {
+			if(this.popupTimer) {
+				this.cancelTimer();
+			}
+			this.popupTimer = setTimeout(this.closePopup, 3000);
+		},
+		cancelTimer() {
+			if (this.popupTimer) {
+				clearTimeout(this.popupTimer);
+				this.popupTimer = null;
+			}
+		},
+		changePopupText(title, titleColor, description) {
+			const popupTitle = document.getElementById("popup-title");
+			if(popupTitle) {
+				//change the color of popupTitle to the titleColor var
+				popupTitle.style.color = titleColor;
+				popupTitle.textContent = title;
+			}
+			const popupDesc = document.getElementById("popup-desc");
+			if (popupDesc) {
+				popupDesc.textContent = description;
+			}
+		},
 		enableUserField() {
 			this.$refs.userID.disabled = false;
 			this.$refs.userID.focus()
@@ -108,6 +156,9 @@ const app = {
 			this.onLine = type === "online";
 		},
 		async submitForm() {
+			this.disableUserField();
+			this.changePopupText("Please wait...", "#d57e00", "Student ID: " + this.form.userID);
+			this.cancelTimer();
 			if(this.form.userID === "#"){
 				//Sign all of the users out
 				this.mode.operation = "begonechildren";
@@ -121,7 +172,7 @@ const app = {
 			if(id.startsWith(" ")){
 				id = id.substring(1);
 			}
-			this.form.userID = "";
+			this.showPopup()
 			await fetch(
 				endpoint +
 				"?" +
@@ -138,8 +189,17 @@ const app = {
 				.then((data) => {
 					if (data.status === "error") {
 						errorSound.play();
+						this.changePopupText("ERROR", "red", "Student ID " + id + " does not exist. \n Please scan again.");
+						this.startTimer()
 					} else if (data.status === "success") {
 						successSound.play();
+						if(data.leave === false) {
+							this.changePopupText("Welcome Back", "green", "Successfully checked in " + data.name);
+						}
+						else {
+							this.changePopupText("Goodbye", "green", "Successfully checked out " + data.name);
+						}
+						this.startTimer()
 					}
 					this.localLog.push({
 						userID: id,
@@ -147,9 +207,13 @@ const app = {
 						status: data.status,
 						message: data.message,
 					});
+
+					console.log(data);
+					this.form.userID = "";
+					this.enableUserField()
 				});
 				this.mode.operation = "attendance";
-				this.getUsersData();
+				await this.getUsersData();
 				
 		},
 		async getUsersData() {

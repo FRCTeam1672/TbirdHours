@@ -46,26 +46,42 @@ function userExists(userID) {
 
 function toggleAttendance(e){
   if (findOrphanedCheckIn(e.parameter.userID)) {
-				//User is already checked in, lets check them out
+			userName = getNameFromID(e.parameter.userID);
+      console.log(userName);
+      	//User is already checked in, lets check them out
         if (
 				findOrphanedCheckIn(e.parameter.userID) &&
 				userHasPastCheckin(e.parameter.userID)
 			) {
+
 				row = findOrphanedCheckIn(e.parameter.userID) + 1;
 				dataSheet
 					.getRange(row, 3, 1, 2)
 					.setValues([[new Date(), `=C${row}-B${row}`]]);
 				return ContentService.createTextOutput(
-					JSON.stringify({ status: "success", message: "User checked out" })
+					JSON.stringify({ status: "success", leave: true, message: "User checked out", name: getNameFromID(e.parameter.userID)})
 				).setMimeType(ContentService.MimeType.JSON);
-			} 
+			}
 			} else {
 				dataSheet.appendRow([e.parameter.userID, new Date()]);
 				return ContentService.createTextOutput(
-					JSON.stringify({ status: "success", message: "User checked in" })
+					JSON.stringify({ status: "success", leave: false, message: "User checked in", name: getNameFromID(e.parameter.userID)})
 				).setMimeType(ContentService.MimeType.JSON);
 			}
 }
+
+function getNameFromID(userID) {
+  let values = userSheet.getDataRange().getValues();
+	for (let i = 0; i < values.length; i++) {
+		if (i > 0) {
+			if (values[i][0].toString() === userID.toString()) {
+				return values[i][1] + " " + values[i][2];
+			}
+		}
+	}
+	return "NO NAME";
+}
+
 function begoneChildren(){
   let values = userSheet.getDataRange().getValues();
 	for (let i = 0; i < values.length; i++) {
