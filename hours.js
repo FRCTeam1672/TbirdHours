@@ -45,7 +45,7 @@ const app = {
 			onLine: navigator.onLine,
 			dateTime: {
 				date: `${padTwoDigits(date.getMonth() + 1)}/${padTwoDigits(date.getDate())}/${date.getFullYear()}`,
-				time: `${padTwoDigits(date.getHours())}:${padTwoDigits(date.getMinutes())}:${padTwoDigits(date.getSeconds())}`,
+				time: `${padTwoDigits(date.getHours() % 12)}:${padTwoDigits(date.getMinutes())}:${padTwoDigits(date.getSeconds())}`,
 			},
 			timer: undefined,
 		};
@@ -67,11 +67,23 @@ const app = {
 			}
 		});
 		window.addEventListener("keydown", (e) => {
-			if (e.key === "o") {
+			if (e.key === "m") {
 				//show the popup modal
-				this.showPopup()
+				this.toggleMembersView()
 			}
-			console.log("opened it up")
+		});
+		window.addEventListener("keydown", (e) => {
+			if (e.key === "h") {
+				//show the popup modal
+				this.toggleHelpText()
+			}
+		});
+		window.addEventListener("keydown", (e) => {
+			if (e.key === "#") {
+				//show the popup modal
+				this.form.userID = "#";
+				this.submitForm()
+			}
 		});
 		this.enableUserField();
 	},
@@ -90,6 +102,7 @@ const app = {
 
 	},
 	methods: {
+		//releated to popup
 		showPopup() {
 			const popup = document.getElementById("popup-box");
 			if (popup) {
@@ -130,6 +143,16 @@ const app = {
 				popupDesc.textContent = description;
 			}
 		},
+
+		toggleMembersView() {
+			var mem = document.getElementById("members");
+			mem.style.display = mem.style.display === "none" ? "block" : "none";
+		},
+		toggleHelpText() {
+			var help = document.getElementById("helpText");
+			help.style.display = help.style.display === "none" ? "block" : "none";
+		},
+
 		enableUserField() {
 			this.$refs.userID.disabled = false;
 			this.$refs.userID.focus()
@@ -141,7 +164,7 @@ const app = {
 			const date = new Date();
 			this.dateTime = {
 				date: `${padTwoDigits(date.getMonth() + 1)}/${padTwoDigits(date.getDate())}/${date.getFullYear()}`,
-				time: `${padTwoDigits(date.getHours())}:${padTwoDigits(date.getMinutes())}:${padTwoDigits(date.getSeconds())}`,
+				time: `${padTwoDigits(date.getHours() % 12)}:${padTwoDigits(date.getMinutes())}:${padTwoDigits(date.getSeconds())}`,
 			};
 		},
 		//https://javascript.plainenglish.io/create-a-digital-clock-app-with-vue-3-and-javascript-c5c0251d5ce3
@@ -157,18 +180,23 @@ const app = {
 		},
 		async submitForm() {
 			this.disableUserField();
+			if (this.form.userID === "") {
+				this.enableUserField();
+				this.closePopup();
+				return;
+			}
+
 			this.changePopupText("Please wait...", "#d57e00", "Student ID: " + this.form.userID);
 			this.cancelTimer();
 			if(this.form.userID === "#"){
 				//Sign all of the users out
 				this.mode.operation = "begonechildren";
+				this.form.userID = "";
+				this.changePopupText("Please wait...", "#0007c0", "Currently signing everyone out... ");
 				this.enableUserField();
 			}
-			if (this.form.userID === "") {
-				this.enableUserField();
-				return;
-			}
-			var id = this.form.userID;
+
+			var id = this.form.userID + "";
 			if(id.startsWith(" ")){
 				id = id.substring(1);
 			}
@@ -193,7 +221,10 @@ const app = {
 						this.startTimer()
 					} else if (data.status === "success") {
 						successSound.play();
-						if(data.leave === false) {
+						if(data.begone === true) {
+							this.changePopupText("Goodbye Everyone", "green", "Successfully checked out all students");
+						}
+						else if(data.leave === false) {
 							this.changePopupText("Welcome Back", "green", "Successfully checked in " + data.name);
 						}
 						else {
@@ -214,7 +245,7 @@ const app = {
 				});
 				this.mode.operation = "attendance";
 				await this.getUsersData();
-				
+
 		},
 		async getUsersData() {
 			await fetch(
@@ -236,7 +267,7 @@ const app = {
 						if (index > 0) {
 							item[4] === true && usersCheckedInCount++
 						}
-					}, 
+					},
 					)
 					this.usersCheckedIn = usersCheckedInCount
 				});

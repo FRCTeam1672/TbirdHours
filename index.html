@@ -20,32 +20,26 @@
         </a>
     </nav>
     <div id="app" class="plainflex one main-content tall">
-<!--        <div>-->
-<!--            <article class="card h100">-->
-<!--                <div class = "scrollable">-->
-<!--                    <main class="member-list">-->
-<!--                        <div v-for="row in usersData" v-bind:class="{ checkedIn: row['Checked In'] === true }">-->
-<!--                            <div class="member">-->
-<!--                                <div class="member-name">{{row["First Name"]}} {{row["Last Name"]}}</div>-->
-<!--                                <div class="member-id"><label>Id:</label> <i>{{row["User ID"]}}</i></div>-->
-<!--                                <div class="member-hours"><label>Hours/Mins:</label> <i>{{convertTimestampToDuration(row["Total Seconds"])}}</i></div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </main>-->
-<!--                </div>-->
-<!--            </article>-->
-<!--        </div>-->
+        <div id = "members" style="display: none">
+            <article class="card h100">
+                <div class = "scrollable">
+                    <main class="member-list">
+                        <div v-for="row in usersData" v-bind:class="{ checkedIn: row['Checked In'] === true }">
+                            <div class="member">
+                                <div class="member-name">{{row["First Name"]}} {{row["Last Name"]}}</div>
+                                <div class="member-id"><label>Id:</label> <i>{{row["User ID"]}}</i></div>
+                                <div class="member-hours"><label>Hours/Mins:</label> <i>{{convertTimestampToDuration(row["Total Seconds"])}}</i></div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </article>
+        </div>
         <div class="third tall">
             <article class="card" style="align-items: center">
-                <header style="align-items: center">
-                   <h1 style="text-align: center; font-size: 64px">
-                       {{new Intl.DateTimeFormat('default',
-                           {
-                               hour12: true,
-                               hour: 'numeric',
-                               minute: 'numeric',
-                               second: 'numeric'
-                           }).format(new Date())}}
+                <header style="align-content: center">
+                   <h1 style="text-align: center; font-size: 54px">
+                       Please Scan Your Student ID
                    </h1>
                 </header>
             </article>
@@ -129,10 +123,19 @@
                     <hr class="rounded">
                     <form @submit.prevent="submitForm">
                         <div class="input-field">
-                            <input autocomplete="off" ref="userID" type="text" id="userID" v-model="form.userID"
-                                placeholder="Please Scan Your Student ID" />
+                            <input autocomplete="off" ref="userID" type="number" id="userID" v-model="form.userID"
+                                   placeholder="Please Scan Your Student ID" />
                         </div>
-                        <p>
+                        <br>
+                        <p id="helpText" style="display: none">
+                            Press <strong>H</strong> to show to this help text.
+                            <br>
+                            Press <strong>M</strong> to toggle the members view.
+                            <br>
+                            Press <strong>#</strong> in the text box to sign everyone out.
+                            <br>
+                            Press <strong>L</strong> to toggle the leaderboard (TODO).
+                        </p>
                     </form>
                 </footer>
             </article>
