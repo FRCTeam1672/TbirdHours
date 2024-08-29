@@ -170,6 +170,31 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
 
+.leaderboard {
+    outline: 3px solid goldenrod;
+    border-radius: 2px;
+    width: 60%;
+    padding: 1em;
+    overflow-y: auto;
+}
+
+.leaderboard h2 {
+    text-decoration: underline;
+    font-size: 1.5em;
+    margin-bottom: 1em;
+}
+
+.leaderboard ul {
+    list-style: none;
+    padding: 5px;
+}
+
+.leaderboard li {
+    padding: 0.5em;
+    font-size: 1.2em;
+    border-bottom: 1px solid #ddd;
+}
+
 .box {
     background-color: black;
     height: 100vh;

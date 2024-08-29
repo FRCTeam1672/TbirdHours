@@ -41,6 +41,19 @@ const app = {
 			},
 			localLog: [],
 			usersData: [],
+			leaderboard: [
+				{userID: "37971", name: "John Doe1", totalSeconds: 12343},
+				{userID: "37971", name: "John Doe2", totalSeconds: 12143},
+				{userID: "37971", name: "John Doe3", totalSeconds: 12349},
+				{userID: "37971", name: "John Doe4", totalSeconds: 156343},
+				{userID: "37971", name: "John Doe5", totalSeconds: 52343},
+				{userID: "37971", name: "John Doe6", totalSeconds: 52343},
+				{userID: "37971", name: "John Doe7", totalSeconds: 52343},
+				{userID: "37971", name: "John Doe8", totalSeconds: 52343},
+				{userID: "37971", name: "John Doe9", totalSeconds: 52343},
+				{userID: "37971", name: "John Doe10", totalSeconds: 52343},
+
+			],
 			usersCheckedIn: 0,
 			onLine: navigator.onLine,
 			dateTime: {
@@ -76,6 +89,12 @@ const app = {
 			if (e.key === "h") {
 				//show the popup modal
 				this.toggleHelpText()
+			}
+		});
+		window.addEventListener("keydown", (e) => {
+			if (e.key === "l") {
+				//show the popup modal
+				this.toggleLeaderboard()
 			}
 		});
 		window.addEventListener("keydown", (e) => {
@@ -152,7 +171,12 @@ const app = {
 			var help = document.getElementById("helpText");
 			help.style.display = help.style.display === "none" ? "block" : "none";
 		},
-
+		toggleLeaderboard() {
+			var lead = document.getElementById("leaderboard");
+			lead.style.display = lead.style.display === "none" ? "block" : "none";
+			var className = document.getElementById("app").className;
+			document.getElementById("app").className = className.includes("two") ? className.replace("two", "one") : className.replace("one", "two");
+		},
 		enableUserField() {
 			this.$refs.userID.disabled = false;
 			this.$refs.userID.focus()
