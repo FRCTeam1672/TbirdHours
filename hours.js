@@ -222,7 +222,7 @@ const app = {
 					} else if (data.status === "success") {
 						successSound.play();
 						if(data.begone === true) {
-							this.changePopupText("Goodbye Everyone", "green", "Successfully checked out all students");
+							this.changePopupText("Goodbye Everyone", "lightblue", "Successfully checked out all students");
 						}
 						else if(data.leave === false) {
 							this.changePopupText("Welcome Back", "green", "Successfully checked in " + data.name);
