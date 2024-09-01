@@ -41,19 +41,7 @@ const app = {
 			},
 			localLog: [],
 			usersData: [],
-			leaderboard: [
-				{userID: "37971", name: "John Doe1", totalSeconds: 12343},
-				{userID: "37971", name: "John Doe2", totalSeconds: 12143},
-				{userID: "37971", name: "John Doe3", totalSeconds: 12349},
-				{userID: "37971", name: "John Doe4", totalSeconds: 156343},
-				{userID: "37971", name: "John Doe5", totalSeconds: 52343},
-				{userID: "37971", name: "John Doe6", totalSeconds: 52343},
-				{userID: "37971", name: "John Doe7", totalSeconds: 52343},
-				{userID: "37971", name: "John Doe8", totalSeconds: 52343},
-				{userID: "37971", name: "John Doe9", totalSeconds: 52343},
-				{userID: "37971", name: "John Doe10", totalSeconds: 52343},
-
-			],
+			leaderboard: [],
 			usersCheckedIn: 0,
 			onLine: navigator.onLine,
 			dateTime: {
@@ -70,8 +58,8 @@ const app = {
 		endpoint = APP_CONFIG["endpoint"];
 		successSound = new Audio(APP_CONFIG["successSound"]);
 		errorSound = new Audio(APP_CONFIG["errorSound"]);
-		
-		this.getUsersData();
+
+		this.updateEverything().then(r => console.log("Updated everything"));
 		window.addEventListener("online", this.updateOnlineStatus);
 		window.addEventListener("offline", this.updateOnlineStatus);
 		window.addEventListener("keydown", (e) => {
@@ -202,6 +190,11 @@ const app = {
 			}
 			this.onLine = type === "online";
 		},
+
+		async updateEverything() {
+			await this.getUsersData();
+			await this.getLeaderboard();
+		},
 		async submitForm() {
 			this.disableUserField();
 			if (this.form.userID === "") {
@@ -262,13 +255,11 @@ const app = {
 						status: data.status,
 						message: data.message,
 					});
-
-					console.log(data);
 					this.form.userID = "";
 					this.enableUserField()
 				});
 				this.mode.operation = "attendance";
-				await this.getUsersData();
+				this.updateEverything();
 
 		},
 		async getUsersData() {
@@ -291,9 +282,29 @@ const app = {
 						if (index > 0) {
 							item[4] === true && usersCheckedInCount++
 						}
-					},
-					)
+					});
 					this.usersCheckedIn = usersCheckedInCount
+				});
+		},
+		async getLeaderboard() {
+			await fetch(
+				endpoint +
+				"?" +
+				new URLSearchParams({
+					operation: "getLeaderboard",
+				}),
+				{
+					method: "GET",
+					redirect: "follow",
+				}
+			)
+				.then((response) => response.json())
+				.then((data) => {
+					this.leaderboard = transformTabularData(data);
+					this.leaderboard.forEach((item, index) => {
+						let duration = this.usersData.filter((user) => user["First Name"] === item["Name"].split(" ")[0])[0]["Total Seconds"];
+						item["Hours"] = this.convertTimestampToDuration(duration);
+					});
 				});
 		},
 		convertTimestampToDuration(timestamp) {

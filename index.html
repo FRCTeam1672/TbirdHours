@@ -25,8 +25,8 @@
                 <div class="leaderboard" id="leaderboard" style="display: none">
                     <h2>Leaderboard</h2>
                     <ul>
-                        <li v-for="(user, index) in leaderboard" :key="user.userID">
-                            Rank #{{ index + 1 }}: {{ user.name }} - {{ convertTimestampToDuration(user.totalSeconds) }}
+                        <li v-for="(row, index) in leaderboard" v-bind:class="{rank1: index === 0, rank2: index === 1, rank3: index === 2}">
+                            Rank #{{ index + 1 }}: {{ row["Name"] }} - {{ row["Hours"] }}
                         </li>
                     </ul>
                 </div>
@@ -149,7 +149,7 @@
                                 <br>
                                 Press <strong>#</strong> in the text box to sign everyone out.
                                 <br>
-                                Press <strong>L</strong> to toggle the leaderboard (TODO).
+                                Press <strong>L</strong> to toggle the leaderboard.
                             </p>
                         </form>
                     </footer>
