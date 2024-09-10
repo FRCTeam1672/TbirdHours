@@ -4,64 +4,77 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hours</title>
+    <title>T Bird Hours</title>
     <link rel="stylesheet" href="picnic.min.css" />
     <link rel="stylesheet" href="hours.css" />
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 
 <body>
-    <nav class="">
-        <a href="#" class="brand">
-            <span>T-Bird Hours</span>
+    <nav class="brand-text">
+        <a href="#" class="brand-text-label-primary">
+            <span>Robo T-Birds</span>
+        </a>
+        <a href="#" class="brand-text-label-contrast">
+            <span>Attendance System</span>
         </a>
     </nav>
-    <div id="app" class="plainflex two main-content tall">
+    <div id="app" class="plainflex one main-content tall">
         <div>
-            <article class="card h100">
-                <div class = "scrollable">
-                    <main class="member-list">
-                        <div v-for="row in usersData" v-bind:class="{ checkedIn: row['Checked In'] == true }">
-                            <div class="member">
-                                <div class="member-name">{{row["First Name"]}} {{row["Last Name"]}}</div>
-                                <div class="member-id"><label>Id:</label> <i>{{row["User ID"]}}</i></div>
-                                <div class="member-hours"><label>Hours/Mins:</label> <i>{{convertTimestampToDuration(row["Total Seconds"])}}</i></div>
-                            </div>
-                        </div>
-                    </main>
+            <main>
+                <div class="leaderboard" id="leaderboard" style="display: none">
+                    <h2>Leaderboard</h2>
+                    <ul>
+                        <li v-for="(row, index) in leaderboard" v-bind:class="{rank1: index === 0, rank2: index === 1, rank3: index === 2}">
+                            Rank #{{ index + 1 }}: {{ row["Name"] }} - {{ row["Hours"] }}
+                        </li>
+                    </ul>
                 </div>
-            </article>
+            </main>
         </div>
-        &nbsp;
-        <div class="third tall">
-            <article class="card">
-                <header>
-                    <h1>
-                        {{dateTime.date}}
-                        <br />
-                        {{dateTime.time}}
-                        <br />
-                        {{usersCheckedIn}} Students Checked In
-                    </h1>
-                </header>
-            </article>
-            <article class="card">
-                <main>
-                    <table class="primary center">
-                        <thead>
+
+        <div>
+            <div id = "members" style="display: none">
+                <article class="card h200">
+                    <div class = "scrollable">
+                        <main class="member-list">
+                            <div v-for="row in usersData" v-bind:class="{ checkedIn: row['Checked In'] === true }">
+                                <div class="member">
+                                    <div class="member-name">{{row["First Name"]}} {{row["Last Name"]}}</div>
+                                    <div class="member-id"><label>Id:</label> <i>{{row["User ID"]}}</i></div>
+                                    <div class="member-hours"><label>Hours/Mins:</label> <i>{{convertTimestampToDuration(row["Total Seconds"])}}</i></div>
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+                </article>
+            </div>
+            <div class="tall">
+                <article class="card" style="align-items: center">
+                    <header style="align-items: center">
+                        <h1 style="text-align: center; font-size: 42px">
+                            <!--                            help idk why its not cenetered. this is the solution-->
+                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspPlease Scan Your Student ID
+                        </h1>
+                    </header>
+                </article>
+                <article class="card">
+                    <main>
+                        <table class="primary center">
+                            <thead>
                             <tr>
-                                <th>Student ID</th>
-                                <th>Message</th>
-				                <th></th>
+                                <th style="font-size: 14px">Student ID</th>
+                                <th style="font-size: 14px">Message</th>
+                                <th></th>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             <tr v-for="item in localLogEntries">
                                 <td>{{item.userID}}</td>
                                 <td>
                                     <span
-                                        v-bind:class="{success: item.status == 'success', warning: item.status == 'error'}"
-                                        class="label">
+                                            v-bind:class="{success: item.status == 'success', warning: item.status == 'error'}"
+                                            class="label">
                                         {{item.status}}&nbsp;{{item.message}}&nbsp;
                                         <td></td>
                                     </span>
@@ -117,31 +130,37 @@
                                 <td></td>
                                 <td></td>
                             </tr>
-                        </tbody>
-                    </table>
-                </main>
+                            </tbody>
+                        </table>
+                    </main>
 
-                <footer>
-                    <h3>
-                        Enter/Scan your Student ID
-                    </h3>
-                    <form @submit.prevent="submitForm">
-                        <div class="input-field">
-                            <input autocomplete="off" ref="userID" type="text" id="userID" v-model="form.userID"
-                                placeholder="Student ID" />
-                            <button>Submit</button>
-                        </div>
-                        <p>
-			    <strong>Enter or scan</strong> your student ID to check in or out.
-			</p>
-			<p>
-                            Enter
-                            <strong>*</strong>
-                            to refresh attendance data
-                        </p>
-                    </form>
-                </footer>
-            </article>
+                    <footer>
+                        <hr class="rounded">
+                        <form @submit.prevent="submitForm">
+                            <div class="input-field">
+                                <input autocomplete="off" ref="userID" type="number" id="userID" v-model="form.userID"
+                                       placeholder="Please Scan Your Student ID" />
+                            </div>
+                            <br>
+                            <p id="helpText" style="display: none">
+                                Press <strong>H</strong> to show to this help text.
+                                <br>
+                                Press <strong>M</strong> to toggle the members view.
+                                <br>
+                                Press <strong>#</strong> in the text box to sign everyone out.
+                                <br>
+                                Press <strong>L</strong> to toggle the leaderboard.
+                            </p>
+                        </form>
+                    </footer>
+                </article>
+            </div>
+            <div id="popup-box" class="modal">
+                <div class="content">
+                    <h1 id="popup-title"></h1>
+                    <p id="popup-desc"></p>
+                </div>
+            </div>
         </div>
     </div>
 </body>
